@@ -20,7 +20,7 @@ public class NumberGenerator {
 								{ 11, 0, 12} 
 				 			 };
 		KeyPad pad = new KeyPad(cellsArray);
-		pad.setDeepness(6);
+		pad.setDeepness(7);
 		pad.setMaxColumn(3);
 		pad.setMaxRow(4);
 		pad.setPiece(PieceFactory.buildQueen());
@@ -39,7 +39,7 @@ public class NumberGenerator {
 			System.out
 					.println("Phone numbers that can be generated with the selected piece: "
 							+ pad.getMaxDigits());
-			System.out.println(pad.getDigits().toString());
+			System.out.println("Generated numbers" + pad.getDigits().toString());
 		} catch (InvalidPositionException e) {
 			e.printStackTrace();
 		}
