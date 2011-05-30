@@ -1,8 +1,12 @@
 package com.garis.generator.chess;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.garis.generator.InvalidPositionException;
 import com.garis.generator.chess.pieces.King;
@@ -181,7 +185,7 @@ public class KeyPad {
 	private void getWiredCells(String collect, Cell cell, int deepness) {
 		if (deepness > 0) {
 			LinkedList<Move> moves = piece.getMoves();
-			LinkedList<Cell> validCells = new LinkedList<Cell>();
+			Set<Cell> validCells = new LinkedHashSet<Cell>();
 			
 			int currentRow = cell.getRow();
 			int currentColumn = cell.getColumn();
@@ -201,8 +205,9 @@ public class KeyPad {
 					validCells.addAll(reachEnd(movedTo,cell));
 			}
 			
-			for (int c=0; c<validCells.size();c++) {
-				Cell validCell = validCells.get(c);
+			Iterator<Cell> cellsIterator = validCells.iterator();
+			while (cellsIterator.hasNext()) {
+				Cell validCell = cellsIterator.next();
 				String cellValue = getValueFromCell(validCell)+"";
 				getWiredCells(collect + "" +cellValue, validCell, (deepness-1));	
 			}
@@ -216,8 +221,8 @@ public class KeyPad {
 		return cellsArray[cell.getRow()][cell.getColumn()];
 	}
 	
-	public LinkedList<Cell> reachEnd(Move move, Cell current) {
-		LinkedList<Cell> tempList = new LinkedList<Cell>();
+	public Set<Cell> reachEnd(Move move, Cell current) {
+		Set<Cell> cellsList = new LinkedHashSet<Cell>();
 		Cell newCell = new Cell(current.getRow(), current.getColumn());
 		Move newMove =new Move(move.getMoveRow(), move.getMoveColumn(), true);
 		boolean secureArea = true;
@@ -227,9 +232,9 @@ public class KeyPad {
 			if (isOverLimits(newCell)) {
 				secureArea = false;
 			} else {
-				tempList.add(new Cell(newCell.getRow(),newCell.getColumn()));
+				cellsList.add(new Cell(newCell.getRow(),newCell.getColumn()));
 			}
 		}
-		return tempList;
+		return cellsList;
 	}
 }
