@@ -176,7 +176,7 @@ public class KeyPad {
 	
 	public void getWiredCells() {
 		digits = new StringBuilder();
-		getWiredCells(getValueFromCell(startingCell)+"", startingCell,this.deepness);
+		getWiredCells(getValueFromCell(startingCell)+"", startingCell,this.deepness-1);
 	}
 	private void getWiredCells(String collect, Cell cell, int deepness) {
 		if (deepness > 0) {
