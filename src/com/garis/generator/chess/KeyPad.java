@@ -170,7 +170,7 @@ public class KeyPad {
 
 	public boolean isOverLimits(Cell cell) {
 		return (cell.getRow() < 0) || (cell.getColumn() < 0) ||
-        (cell.getRow() > this.maxRow-1) || (cell.getColumn() > this.maxColumn-1) ||
+        (cell.getRow() >= this.maxRow) || (cell.getColumn() >= this.maxColumn) ||
         (invalidKeys.contains(cell));
 	}
 	
@@ -178,15 +178,13 @@ public class KeyPad {
 		digits = new StringBuilder();
 		getWiredCells(getValueFromCell(startingCell)+"", startingCell,this.deepness);
 	}
-	private long getWiredCells(String collect, Cell cell, int deepness) {
+	private void getWiredCells(String collect, Cell cell, int deepness) {
 		if (deepness > 0) {
 			LinkedList<Move> moves = piece.getMoves();
-			if (piece.isEndReacher())
-				moves.addAll(reachEnd(moves,cell));
+			LinkedList<Cell> validCells = new LinkedList<Cell>();
 			
 			int currentRow = cell.getRow();
 			int currentColumn = cell.getColumn();
-			collect = collect + "" + getValueFromCell(cell);
 			for (int digitCount=0; digitCount<moves.size(); digitCount++){
 				Move movedTo = moves.get(digitCount);
 				if (movedTo.isInfinite()) {
@@ -196,42 +194,42 @@ public class KeyPad {
 				movedCell.moveCell(movedTo); 
 				if (isOverLimits(movedCell)) {
 					continue;
+				} else {
+					validCells.add(movedCell);
 				}
-				String cellValue = getValueFromCell(movedCell)+"";
-				collect = collect + "" +cellValue;
-				getWiredCells(cellValue, movedCell, --deepness);	
+				if (piece.isEndReacher() && movedTo.isInfinite())
+					validCells.addAll(reachEnd(movedTo,cell));
+			}
+			
+			for (int c=0; c<validCells.size();c++) {
+				Cell validCell = validCells.get(c);
+				String cellValue = getValueFromCell(validCell)+"";
+				getWiredCells(collect + "" +cellValue, validCell, (deepness-1));	
 			}
 		} else {
 			if (printDigits)
-				digits.append(collect + " \n\r");
+				digits.append(collect + " \n");
 			maxDigits++;
-			//System.out.println(collect);
 		}
-		return maxDigits;
 	}
 	private int getValueFromCell(Cell cell) {
 		return cellsArray[cell.getRow()][cell.getColumn()];
 	}
-	public LinkedList<Move> reachEnd(LinkedList<Move> moves, Cell current) {
-		LinkedList<Move> tempList = new LinkedList<Move>();
-		for(int m=0; m<moves.size();m++) {
-			Move move = moves.get(m);
-			Cell newCell = new Cell(current.getRow(), current.getColumn());
-			Move newMove =new Move(move.getMoveRow(), move.getMoveColumn(), true);
-			boolean secureArea = true;
-			while (secureArea) {
-				newCell.moveCell(newMove);
-				if (!isOverLimits(newCell) && !tempList.contains(newMove)) {
-					tempList.add(newMove);
-		//			System.out.println(" move: " + newMove + " CELL : " + newCell);
-				} else {
-					secureArea = false;
-					break;
-				}
-				newMove.increment(move.getMoveRow(), move.getMoveColumn());
+	
+	public LinkedList<Cell> reachEnd(Move move, Cell current) {
+		LinkedList<Cell> tempList = new LinkedList<Cell>();
+		Cell newCell = new Cell(current.getRow(), current.getColumn());
+		Move newMove =new Move(move.getMoveRow(), move.getMoveColumn(), true);
+		boolean secureArea = true;
+		while (secureArea) {
+			newMove.increment(move.getMoveRow(), move.getMoveColumn());
+			newCell.moveCell(newMove);
+			if (isOverLimits(newCell)) {
+				secureArea = false;
+			} else {
+				tempList.add(new Cell(newCell.getRow(),newCell.getColumn()));
 			}
 		}
 		return tempList;
 	}
-	
 }
