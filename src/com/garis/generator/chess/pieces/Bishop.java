@@ -9,7 +9,7 @@ public class Bishop extends Piece {
 		moves.add(new Move(1,1,true));
 		moves.add(new Move(1,-1,true));
 		moves.add(new Move(-1,1,true));
-		moves.add(new Move(1,-1,true));
+		moves.add(new Move(-1,-1,true));
 	}
 	
 	@Override
