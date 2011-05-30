@@ -30,26 +30,6 @@ public class Pruebas {
 	}
 	
 	public static void main(String[] argvs) {
-		Cell current = new Cell(0,2);
-		List<Move> tempList = new ArrayList<Move>();
-		for(int m=0; m<moves.size();m++) {
-			Move move = moves.get(m);
-			Cell newCell = new Cell(current.getRow(), current.getColumn());
-			Move newMove =new Move(move.getMoveRow(), move.getMoveColumn(), true);
-			boolean secureArea = true;
-			while (secureArea) {
-				newCell.moveCell(newMove);
-				if (!isOverLimits(newCell) && !tempList.contains(newMove)) {
-					tempList.add(newMove);
-					System.out.println(" move: " + newMove + " CELL : " + newCell);
-				} else {
-					secureArea = false;
-					break;
-				}
-				newMove.increment(move.getMoveRow(), move.getMoveColumn());
-			}
-		}
-		//moves.addAll(tempList);
-		System.out.println(tempList);
+		
 	}
 }
